@@ -17,6 +17,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Illuminate\Support\HtmlString;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -26,6 +27,35 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->brandName('ilabs360')
             ->brandLogo(asset('images/Logo.png'))
+            ->brandLogo(new HtmlString('
+                <img
+                    id="brand-logo"
+                    src="' . asset('images/logo-light.png') . '"
+                    alt="Logo"
+                    style="height:70px"
+                >
+
+                <script>
+                    (() => {
+                        const logo = document.getElementById("brand-logo");
+
+                        function updateLogo() {
+                            const isDark = document.documentElement.classList.contains("dark");
+
+                            logo.src = isDark
+                                ? "' . asset('images/logo-dark.png') . '"
+                                : "' . asset('images/logo-light.png') . '";
+                        }
+
+                        updateLogo();
+
+                        new MutationObserver(updateLogo).observe(document.documentElement, {
+                            attributes: true,
+                            attributeFilter: ["class"],
+                        });
+                    })();
+                </script>
+            '))
             ->brandLogoHeight('4rem')
             ->favicon(asset('images/Logo.png'))
             ->id('admin')
@@ -34,7 +64,7 @@ class AdminPanelProvider extends PanelProvider
             // ->registration()
             ->registration()
             ->colors([
-                'primary' => '#1e549f', // your custom color here
+                'primary' => '#ff0000', // your custom color here
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
